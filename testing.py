@@ -1012,7 +1012,7 @@ def cltv():
 
 
 
-def dynamic_pricing():
+def dynamic_pricing(prodid):
  
   def product_demand_forecast(product_id):
     import datetime
@@ -1258,7 +1258,7 @@ def dynamic_pricing():
     plt.legend()
     return prediction
 
-  prodid=st.text_input("Provide Product ID")
+  
   pred=product_demand_forecast(prodid)
 
   import pandas as pd
@@ -1322,7 +1322,8 @@ elif functionality=="CLTV Predictions":
   st.write("This function generates the CLTV of the visitors based on a historical and predictive approach.")
   cltv()
 elif functionality=="Dynamic Pricing":
-    dynamic_pricing()
+    prodid=st.text_input("Provide Product ID")
+    dynamic_pricing(int(prodid))
     
 
 
