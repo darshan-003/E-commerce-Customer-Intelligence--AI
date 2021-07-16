@@ -264,11 +264,32 @@ def forecast():
       fit_model = ExponentialSmoothing(df_t[eval],trend='add',seasonal='add',seasonal_periods=41).fit()
       prediction = fit_model.forecast(30)
     # train[eval].plot(legend=True,figsize=(10,6))
+
+      
+      # df_t[eval].plot(legend=True,figsize=(10,6))
+      # prediction.plot(legend=True,figsize=(10,6),label='pred')
+
+
+      def makegraph(x,y):
+        import matplotlib.pyplot as plt
+        from matplotlib.widgets import Cursor
+        fig = plt.figure()
+        fig.set_size_inches(8.5, 5)
+        ax = fig.subplots()
+        ax.plot(x,y, color = 'b')
+        ax.grid()
+        st.plotly_chart(fig)
+
+        
+
       st.write(category_id)  
       st.write("Actual Data")  
-      st.line_chart(df_t[eval])
+      makegraph(df_t.index,df_t[eval])
       st.write("Predicted Data")
-      st.line_chart(prediction)
+      makegraph(prediction.index,prediction)
+
+
+
 
 
 
@@ -509,15 +530,23 @@ def forecast():
         fit_model = ExponentialSmoothing(df_t[eval],trend='add',seasonal='add',seasonal_periods=41).fit()
         prediction = fit_model.forecast(30)
       # train[eval].plot(legend=True,figsize=(10,6))
-        df_t[eval].plot(legend=True,figsize=(10,6))
-        prediction.plot(legend=True,figsize=(10,6),label='pred')
-        plt.legend()
+
+        def makegraph(x,y):
+          import matplotlib.pyplot as plt
+          from matplotlib.widgets import Cursor
+          fig = plt.figure()
+          fig.set_size_inches(8.5, 5)
+          ax = fig.subplots()
+          ax.plot(x,y, color = 'b')
+          ax.grid()
+          st.plotly_chart(fig)
+
+        
         st.write(item)  
         st.write("Actual Data")  
-        st.line_chart(df_t[eval])
+        makegraph(df_t.index,df_t[eval])
         st.write("Predicted Data")
-        st.line_chart(prediction)
-
+        makegraph(prediction.index,prediction)
 
 
 
@@ -1322,7 +1351,7 @@ elif functionality=="CLTV Predictions":
   st.write("This function generates the CLTV of the visitors based on a historical and predictive approach.")
   cltv()
 elif functionality=="Dynamic Pricing":
-    prodid=st.text_input("Provide Product ID")
+    prodid=st.text_input("Provide Product ID",25)
     dynamic_pricing(int(prodid))
     
 
