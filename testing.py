@@ -551,7 +551,9 @@ def forecast():
 
 
 
-    st.title("Product/Category Demand Forecast")
+    original_title = '<p style="font-family:Arial; color:Black; font-size: 30px;">Product and Category Forecasting</p>'
+    st.markdown(original_title, unsafe_allow_html=True)
+
     parameter=st.selectbox("Select the Appropriate Parameter",("Category","Product"))
 
     if parameter=='Category':
@@ -705,7 +707,8 @@ def recommend():
     # working with sample data.
     import numpy as np
     import pandas as pd
-    st.title('Product and Category Recommendation')
+    original_title = '<p style="font-family:Arial; color:Black; font-size: 30px;">Product and Category Recommendation</p>'
+    st.markdown(original_title, unsafe_allow_html=True)
     option = st.selectbox("Select",('Product ID', 'Category ID'))
     st.write('You selected:', option)
 
@@ -892,14 +895,20 @@ def recommend():
 
 
             if len(commonapriori)>5:
-                commonapriori=top5(commonapriori,categorylist)
+            	check=st.checkbox("Do you want to see All the Recommendations instead of Top 5",0)
+            	if check:
+            		commonapriori_top=commonapriori
+            	else:	
+                	commonapriori_top=top5(commonapriori,categorylist)
+            else:
+            	commonapriori_top=commonapriori    
 
 
 
 
             if len(categorylist)!=0:	
                 st.write("The Category Recommendations are: ")
-                a1=pd.Series(commonapriori)
+                a1=pd.Series(commonapriori_top)
                 a1.index+=1
                 a1=a1.rename("Category ID")
                 st.write(a1)
@@ -908,15 +917,15 @@ def recommend():
 
                 if option=="Yes":
 
-                  final_item_list=finalprocessing(pd.Series(commonapriori))   
+                  final_item_list=finalprocessing(pd.Series(commonapriori_top))   
                   a2= pd.Series(list(set(final_item_list)))
                   a2.index+=1
                   a2=a2.rename("Product ID")
                   st.write(a2)
 
             else:
-                st.write("Sorry,We Could not Find any category recommendation")
-                st.write("Do you want to see the items in the same category as the items you have purchased")
+                st.write("Sorry, We Could not Find any category recommendation")
+                st.write("Do you want to see the items in the same category as the items you have purchased ?")
                 option = st.selectbox("Select",('No', 'Yes'))
                 if(option=='Yes'):
                   final_item_list=all_in_each_cat(catlistemergency)
@@ -945,6 +954,7 @@ def cust_seg():
         return df
 
 
+        
     df = load_data()
     st.write("## Original Dataframe")
 
@@ -1298,6 +1308,8 @@ def dynamic_pricing(prodid):
     return prediction
 
   
+
+
   pred=product_demand_forecast(prodid)
 
   import pandas as pd
@@ -1335,7 +1347,7 @@ def dynamic_pricing(prodid):
     else:
       dynamic['price'].iloc[i] = 'Increase' 
 
-
+  dynamic.index+=1
   st.write(dynamic)
 
 
@@ -1354,16 +1366,23 @@ elif functionality== 'Forecasting':
   forecast()
 
 elif functionality=="Customer Segmentation":
+  original_title = '<p style="font-family:Arial; color:Black; font-size: 30px;">Customer Segmentation</p>'
+  st.markdown(original_title, unsafe_allow_html=True)  
   st.write("This function gives an option to view the dataframes generated using the RFM strategy along with dataframes about visitors belonging to a particular segment")
   cust_seg()
 
 elif functionality=="CLTV Predictions":
-  st.write("This function generates the CLTV of the visitors based on a historical and predictive approach.")
-  cltv()
+	original_title = '<p style="font-family:Arial; color:Black; font-size: 30px;">CLTV Predictions</p>'
+	st.markdown(original_title, unsafe_allow_html=True)
+	st.write("This function generates the CLTV of the visitors based on a historical and predictive approach.")
+	cltv()
 elif functionality=="Dynamic Pricing":
-    prodid=st.text_input("Provide Product ID",25)
-    dynamic_pricing(int(prodid))
-    
+
+	original_title = '<p style="font-family:Arial; color:Black; font-size: 30px;">Product Dynamic Pricing</p>'
+	st.markdown(original_title, unsafe_allow_html=True)
+	prodid=st.text_input("Provide Product ID",25)
+	dynamic_pricing(int(prodid))
+
 
 
 # In[ ]:
