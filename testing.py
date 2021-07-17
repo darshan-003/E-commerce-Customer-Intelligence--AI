@@ -899,13 +899,20 @@ def recommend():
 
             if len(categorylist)!=0:	
                 st.write("The Category Recommendations are: ")
-                st.write(commonapriori)
+                a1=pd.Series(commonapriori)
+                a1.index+=1
+                a1=a1.rename("Category ID")
+                st.write(a1)
                 st.write("Do You Want a list of items in it (Y/N)")
                 option = st.selectbox("Select",('No', 'Yes'))
 
                 if option=="Yes":
-                  final_item_list=finalprocessing(commonapriori)    
-                  st.write(set(final_item_list))
+
+                  final_item_list=finalprocessing(pd.Series(commonapriori))   
+                  a2= pd.Series(list(set(final_item_list)))
+                  a2.index+=1
+                  a2=a2.rename("Product ID")
+                  st.write(a2)
 
             else:
                 st.write("Sorry,We Could not Find any category recommendation")
@@ -913,7 +920,10 @@ def recommend():
                 option = st.selectbox("Select",('No', 'Yes'))
                 if(option=='Yes'):
                   final_item_list=all_in_each_cat(catlistemergency)
-                  st.write(set(final_item_list))
+                  a2= pd.Series(list(set(final_item_list)))
+                  a2.index+=1
+                  a2=a2.rename("Product ID")
+                  st.write(a2)
 
 
 
