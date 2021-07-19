@@ -20,10 +20,10 @@ def forecast():
 
 
 
-    cat=pd.read_hdf("cat.hf5",key="cat")
-    df_cat_merge=pd.read_hdf("df_cat_merge.hf5",key="df_cat_merge")
+    # cat=pd.read_hdf("cat.hf5",key="cat")
+    # df_cat_merge=pd.read_hdf("df_cat_merge.hf5",key="df_cat_merge")
     df_cat_merge_group=pd.read_hdf("df_cat_merge_group.hf5",key="df_cat_merge_group")
-    prod=pd.read_hdf("prod.hf5",key="prod")
+    # prod=pd.read_hdf("prod.hf5",key="prod")
     prod_group=pd.read_hdf("prod_group.hf5",key="prod_group")
 
 
@@ -709,7 +709,7 @@ def recommend():
     import pandas as pd
     original_title = '<p style="font-family:Arial; color:Black; font-size: 30px;">Product and Category Recommendation</p>'
     st.markdown(original_title, unsafe_allow_html=True)
-    option = st.selectbox("Select",('Product ID', 'Category ID'))
+    option = st.selectbox("Select",( 'Category ID','Product ID'))
     st.write('You selected:', option)
 
     df_y=pd.read_hdf("df_y.hf5")
@@ -731,7 +731,7 @@ def recommend():
         return x
 
     def commoncategory(li):
-        c_category=[]	
+        c_category=[] 
         c_category=c_category+(df_y[li[0]]).tolist()
 
         for i in li:
@@ -810,7 +810,7 @@ def recommend():
         df_temp.reset_index(drop=True,inplace=True)
 
         for i in pd.Series(df_temp.index):
-            for j in df_temp.iloc[i]["consequents"]:	
+            for j in df_temp.iloc[i]["consequents"]:  
                 if j in commonapriori:
                     df_temp1=df_temp1.append(df_temp.iloc[i])
                     break
@@ -895,18 +895,18 @@ def recommend():
 
 
             if len(commonapriori)>5:
-            	check=st.checkbox("Do you want to see All the Recommendations instead of Top 5",0)
-            	if check:
-            		commonapriori_top=commonapriori
-            	else:	
-                	commonapriori_top=top5(commonapriori,categorylist)
+              check=st.checkbox("Do you want to see All the Recommendations instead of Top 5",0)
+              if check:
+                commonapriori_top=commonapriori
+              else: 
+                  commonapriori_top=top5(commonapriori,categorylist)
             else:
-            	commonapriori_top=commonapriori    
+              commonapriori_top=commonapriori    
 
 
 
 
-            if len(categorylist)!=0:	
+            if len(categorylist)!=0:  
                 st.write("The Category Recommendations are: ")
                 a1=pd.Series(commonapriori_top)
                 a1.index+=1
@@ -1359,6 +1359,15 @@ import streamlit as st
 st.title('Ecommerce Customer Intelligence - AI')
 functionality=st.sidebar.selectbox("Choose a function",("-","Recommendation","Forecasting","Customer Segmentation","CLTV Predictions","Dynamic Pricing"))
 
+
+
+if functionality=="-":
+  original_title = '<p style="font-family:Arial; color:Black; font-size: 25px;">This is an app built with the help of streamlit having various functionalities</p>'
+  st.markdown(original_title, unsafe_allow_html=True)
+  original_title = '<p style="font-family:Arial; color:Black; font-size: 25px;">Select a functionality fron the menu on the left </p>'
+  st.markdown(original_title, unsafe_allow_html=True)
+  
+
 if functionality=='Recommendation':
   recommend()
 
@@ -1372,16 +1381,16 @@ elif functionality=="Customer Segmentation":
   cust_seg()
 
 elif functionality=="CLTV Predictions":
-	original_title = '<p style="font-family:Arial; color:Black; font-size: 30px;">CLTV Predictions</p>'
-	st.markdown(original_title, unsafe_allow_html=True)
-	st.write("This function generates the CLTV of the visitors based on a historical and predictive approach.")
-	cltv()
+  original_title = '<p style="font-family:Arial; color:Black; font-size: 30px;">CLTV Predictions</p>'
+  st.markdown(original_title, unsafe_allow_html=True)
+  st.write("This function generates the CLTV of the visitors based on a historical and predictive approach.")
+  cltv()
 elif functionality=="Dynamic Pricing":
 
-	original_title = '<p style="font-family:Arial; color:Black; font-size: 30px;">Product Dynamic Pricing</p>'
-	st.markdown(original_title, unsafe_allow_html=True)
-	prodid=st.text_input("Provide Product ID",25)
-	dynamic_pricing(int(prodid))
+  original_title = '<p style="font-family:Arial; color:Black; font-size: 30px;">Product Dynamic Pricing</p>'
+  st.markdown(original_title, unsafe_allow_html=True)
+  prodid=st.text_input("Provide Product ID",25)
+  dynamic_pricing(int(prodid))
 
 
 
