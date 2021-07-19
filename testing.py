@@ -223,70 +223,77 @@ def forecast():
 
         return
       # print(category_id)
-      df_t = ts_set(df_cat_merge_group,'wt_act',category_id)
-      df_t = df_t.rename(columns={'wt_act':'ts'})
-      # plt.plot(df_t.ts)
-      # plt.xticks(rotation=45)
-      # plt.show()
-      test_stationarity(df_t,'ts')
-      p = transf_plot_sta(df_t,'ts')
-      eval = df_t.columns[np.argmin(p)+2]
-      df_t.dropna(inplace=True)
-      # from statsmodels.tsa.seasonal import seasonal_decompose
-      decomposition = seasonal_decompose(df_t['ts'])
-    # with monthly data and yearly seasonal cycle, m=12
 
-      df_t.loc[:,'trend'] = decomposition.trend
-      df_t.loc[:,'seasonal'] = decomposition.seasonal
-      df_t.loc[:,'residual'] = decomposition.resid
-
-      # plot_decomposition(df = df_t, 
-      #                    ts = 'ts', 
-      #                    trend = 'trend',
-      #                    seasonal = 'seasonal', 
-      #                    residual = 'residual')
-
-      p_resid = test_stationarity(df = df_t.dropna(), ts = 'residual')
-    # print(p_resid)
-      if p_resid < p[np.argmin(p)]:
-        eval = 'residual'
-        df_t = df_t.dropna()
-      # print(eval)
-
-      tr_size = int(df_t.shape[0]*0.8)
-      train = df_t.iloc[:tr_size]
-      test = df_t.iloc[tr_size-1:]
-      # fit_model = ExponentialSmoothing(train[eval],trend='add',seasonal='add',seasonal_periods=41).fit()
-      # prediction = fit_model.forecast(28)
-    # print(mean_squared_error(test[eval],prediction))
-      # test[eval].plot(legend=True,figsize=(10,6))
-      # prediction.plot(legend=True,figsize=(10,6),label='pred')
-      fit_model = ExponentialSmoothing(df_t[eval],trend='add',seasonal='add',seasonal_periods=41).fit()
-      prediction = fit_model.forecast(30)
-    # train[eval].plot(legend=True,figsize=(10,6))
-
-      
-      # df_t[eval].plot(legend=True,figsize=(10,6))
-      # prediction.plot(legend=True,figsize=(10,6),label='pred')
+      if df_cat_merge_group[df_cat_merge_group.categoryid==category_id].empty:
+        st.write(category_id)
+        st.write("Forecasting is not availible for this category")
 
 
-      def makegraph(x,y):
-        import matplotlib.pyplot as plt
-        from matplotlib.widgets import Cursor
-        fig = plt.figure()
-        fig.set_size_inches(8.5, 5)
-        ax = fig.subplots()
-        ax.plot(x,y, color = 'b')
-        ax.grid()
-        st.plotly_chart(fig)
+      else:
+        df_t = ts_set(df_cat_merge_group,'wt_act',category_id)
+        df_t = df_t.rename(columns={'wt_act':'ts'})
+        # plt.plot(df_t.ts)
+        # plt.xticks(rotation=45)
+        # plt.show()
+        test_stationarity(df_t,'ts')
+        p = transf_plot_sta(df_t,'ts')
+        eval = df_t.columns[np.argmin(p)+2]
+        df_t.dropna(inplace=True)
+        # from statsmodels.tsa.seasonal import seasonal_decompose
+        decomposition = seasonal_decompose(df_t['ts'])
+      # with monthly data and yearly seasonal cycle, m=12
+
+        df_t.loc[:,'trend'] = decomposition.trend
+        df_t.loc[:,'seasonal'] = decomposition.seasonal
+        df_t.loc[:,'residual'] = decomposition.resid
+
+        # plot_decomposition(df = df_t, 
+        #                    ts = 'ts', 
+        #                    trend = 'trend',
+        #                    seasonal = 'seasonal', 
+        #                    residual = 'residual')
+
+        p_resid = test_stationarity(df = df_t.dropna(), ts = 'residual')
+      # print(p_resid)
+        if p_resid < p[np.argmin(p)]:
+          eval = 'residual'
+          df_t = df_t.dropna()
+        # print(eval)
+
+        tr_size = int(df_t.shape[0]*0.8)
+        train = df_t.iloc[:tr_size]
+        test = df_t.iloc[tr_size-1:]
+        # fit_model = ExponentialSmoothing(train[eval],trend='add',seasonal='add',seasonal_periods=41).fit()
+        # prediction = fit_model.forecast(28)
+      # print(mean_squared_error(test[eval],prediction))
+        # test[eval].plot(legend=True,figsize=(10,6))
+        # prediction.plot(legend=True,figsize=(10,6),label='pred')
+        fit_model = ExponentialSmoothing(df_t[eval],trend='add',seasonal='add',seasonal_periods=41).fit()
+        prediction = fit_model.forecast(30)
+      # train[eval].plot(legend=True,figsize=(10,6))
 
         
+        # df_t[eval].plot(legend=True,figsize=(10,6))
+        # prediction.plot(legend=True,figsize=(10,6),label='pred')
 
-      st.write(category_id)  
-      st.write("Actual Data")  
-      makegraph(df_t.index,df_t[eval])
-      st.write("Predicted Data")
-      makegraph(prediction.index,prediction)
+
+        def makegraph(x,y):
+          import matplotlib.pyplot as plt
+          from matplotlib.widgets import Cursor
+          fig = plt.figure()
+          fig.set_size_inches(8.5, 5)
+          ax = fig.subplots()
+          ax.plot(x,y, color = 'b')
+          ax.grid()
+          st.plotly_chart(fig)
+
+          
+
+        st.write(category_id)  
+        st.write("Actual Data")  
+        makegraph(df_t.index,df_t[eval])
+        st.write("Predicted Data")
+        makegraph(prediction.index,prediction)
 
 
 
@@ -488,65 +495,70 @@ def forecast():
       # print(category_id)
       # print(product_id)
       for item in args:
-        print(item)
-        df_t = ts_set(prod_group,'wt_act',item)
-        df_t = df_t.rename(columns={'wt_act':'ts'})
-        # plt.plot(df_t.ts)
-        # plt.xticks(rotation=45)
-        # plt.show()
-        test_stationarity(df_t,'ts')
-        p = transf_plot_sta(df_t,'ts')
-        eval = df_t.columns[np.argmin(p)+2]
-        df_t.dropna(inplace=True)
-        # from statsmodels.tsa.seasonal import seasonal_decompose
-        decomposition = seasonal_decompose(df_t['ts'])
-      # with monthly data and yearly seasonal cycle, m=12
+        if prod_group[prod_group.itemid==item].empty:
+          st.write(item)
+          st.write("Forecasting is not availible for this Product ID")
+          
 
-        df_t.loc[:,'trend'] = decomposition.trend
-        df_t.loc[:,'seasonal'] = decomposition.seasonal
-        df_t.loc[:,'residual'] = decomposition.resid
+        else:
+          df_t = ts_set(prod_group,'wt_act',item)
+          df_t = df_t.rename(columns={'wt_act':'ts'})
+          # plt.plot(df_t.ts)
+          # plt.xticks(rotation=45)
+          # plt.show()
+          test_stationarity(df_t,'ts')
+          p = transf_plot_sta(df_t,'ts')
+          eval = df_t.columns[np.argmin(p)+2]
+          df_t.dropna(inplace=True)
+          # from statsmodels.tsa.seasonal import seasonal_decompose
+          decomposition = seasonal_decompose(df_t['ts'])
+        # with monthly data and yearly seasonal cycle, m=12
 
-        # plot_decomposition(df = df_t, 
-        #                    ts = 'ts', 
-        #                    trend = 'trend',
-        #                    seasonal = 'seasonal', 
-        #                    residual = 'residual')
+          df_t.loc[:,'trend'] = decomposition.trend
+          df_t.loc[:,'seasonal'] = decomposition.seasonal
+          df_t.loc[:,'residual'] = decomposition.resid
 
-        p_resid = test_stationarity(df = df_t.dropna(), ts = 'residual')
-      # print(p_resid)
-        if p_resid < p[np.argmin(p)]:
-          eval = 'residual'
-          df_t = df_t.dropna()
-        # print(eval)
+          # plot_decomposition(df = df_t, 
+          #                    ts = 'ts', 
+          #                    trend = 'trend',
+          #                    seasonal = 'seasonal', 
+          #                    residual = 'residual')
 
-        tr_size = int(df_t.shape[0]*0.8)
-        train = df_t.iloc[:tr_size]
-        test = df_t.iloc[tr_size-1:]
-        # fit_model = ExponentialSmoothing(train[eval],trend='add',seasonal='add',seasonal_periods=41).fit()
-        # prediction = fit_model.forecast(28)
-      # print(mean_squared_error(test[eval],prediction))
-        # test[eval].plot(legend=True,figsize=(10,6))
-        # prediction.plot(legend=True,figsize=(10,6),label='pred')
-        fit_model = ExponentialSmoothing(df_t[eval],trend='add',seasonal='add',seasonal_periods=41).fit()
-        prediction = fit_model.forecast(30)
-      # train[eval].plot(legend=True,figsize=(10,6))
+          p_resid = test_stationarity(df = df_t.dropna(), ts = 'residual')
+        # print(p_resid)
+          if p_resid < p[np.argmin(p)]:
+            eval = 'residual'
+            df_t = df_t.dropna()
+          # print(eval)
 
-        def makegraph(x,y):
-          import matplotlib.pyplot as plt
-          from matplotlib.widgets import Cursor
-          fig = plt.figure()
-          fig.set_size_inches(8.5, 5)
-          ax = fig.subplots()
-          ax.plot(x,y, color = 'b')
-          ax.grid()
-          st.plotly_chart(fig)
+          tr_size = int(df_t.shape[0]*0.8)
+          train = df_t.iloc[:tr_size]
+          test = df_t.iloc[tr_size-1:]
+          # fit_model = ExponentialSmoothing(train[eval],trend='add',seasonal='add',seasonal_periods=41).fit()
+          # prediction = fit_model.forecast(28)
+        # print(mean_squared_error(test[eval],prediction))
+          # test[eval].plot(legend=True,figsize=(10,6))
+          # prediction.plot(legend=True,figsize=(10,6),label='pred')
+          fit_model = ExponentialSmoothing(df_t[eval],trend='add',seasonal='add',seasonal_periods=41).fit()
+          prediction = fit_model.forecast(30)
+        # train[eval].plot(legend=True,figsize=(10,6))
 
-        
-        st.write(item)  
-        st.write("Actual Data")  
-        makegraph(df_t.index,df_t[eval])
-        st.write("Predicted Data")
-        makegraph(prediction.index,prediction)
+          def makegraph(x,y):
+            import matplotlib.pyplot as plt
+            from matplotlib.widgets import Cursor
+            fig = plt.figure()
+            fig.set_size_inches(8.5, 5)
+            ax = fig.subplots()
+            ax.plot(x,y, color = 'b')
+            ax.grid()
+            st.plotly_chart(fig)
+
+          
+          st.write(item)  
+          st.write("Actual Data")  
+          makegraph(df_t.index,df_t[eval])
+          st.write("Predicted Data")
+          makegraph(prediction.index,prediction)
 
 
 
@@ -1261,6 +1273,9 @@ def dynamic_pricing(prodid):
       return
     # print(category_id)
     # print(product_id)
+
+
+
     df_t = ts_set(prod_group,'wt_act',product_id)
     df_t = df_t.rename(columns={'wt_act':'ts'})
     # plt.plot(df_t.ts)
@@ -1309,46 +1324,53 @@ def dynamic_pricing(prodid):
 
   
 
+  import pandas as pd  
+  prod_group=pd.read_hdf("prod_group.hf5",key="prod_group") 
 
-  pred=product_demand_forecast(prodid)
+  if prod_group[prod_group.itemid==prodid].empty:
+    st.write("Dynamic Pricing is not availible for this Product ID ")
 
-  import pandas as pd
-  import numpy as np
-  df2=pd.read_hdf("df2.hf5")
-  dynamic = df2[df2.itemid==prodid]
-  dynamic.drop(columns=['timestamp','transactionid'],inplace=True)
-  dummies = pd.get_dummies(dynamic.event)
-  dynamic = pd.concat([dynamic,dummies],axis='columns')
-  if 'transaction' not in dynamic.columns:
-    dynamic['transaction'] = 0
-  if 'addtocart' not in dynamic.columns:
-    dynamic['addtocart'] = 0
-  if 'view' not in dynamic.columns:
-    dynamic['view'] = 0
-  # if dynamic.event
-  dynamic.drop(columns=['event'],inplace=True)
+  else:
 
-  dynamic['wt_act'] = 0.3*dynamic['addtocart'] + 0.5*dynamic['transaction'] + 0.2*dynamic['view']
-  dynamic.drop(columns=['addtocart','view','transaction'],inplace=True)
-  dynamic = dynamic.groupby('visitorid')['wt_act'].sum().reset_index()
-  dynamic['prod_id'] = prodid
-  dynamic['demand'] = np.exp(pred).max()
-  dynamic['threshold'] = 1.8648
+    pred=product_demand_forecast(prodid)
 
-  dynamic['price'] = 'zero'
-  for i in (dynamic.index):
-    wt_act = dynamic.wt_act.iloc[i]
-    dd = dynamic.demand.iloc[i]
-    if wt_act == 0.2 or wt_act == 0.3:
-      dynamic['price'].iloc[i] = 'No Change'
-      continue
-    if dd>1.864:
-      dynamic['price'].iloc[i] = 'Decrease' 
-    else:
-      dynamic['price'].iloc[i] = 'Increase' 
+    import pandas as pd
+    import numpy as np
+    df2=pd.read_hdf("df2.hf5")
+    dynamic = df2[df2.itemid==prodid]
+    dynamic.drop(columns=['timestamp','transactionid'],inplace=True)
+    dummies = pd.get_dummies(dynamic.event)
+    dynamic = pd.concat([dynamic,dummies],axis='columns')
+    if 'transaction' not in dynamic.columns:
+      dynamic['transaction'] = 0
+    if 'addtocart' not in dynamic.columns:
+      dynamic['addtocart'] = 0
+    if 'view' not in dynamic.columns:
+      dynamic['view'] = 0
+    # if dynamic.event
+    dynamic.drop(columns=['event'],inplace=True)
 
-  dynamic.index+=1
-  st.write(dynamic)
+    dynamic['wt_act'] = 0.3*dynamic['addtocart'] + 0.5*dynamic['transaction'] + 0.2*dynamic['view']
+    dynamic.drop(columns=['addtocart','view','transaction'],inplace=True)
+    dynamic = dynamic.groupby('visitorid')['wt_act'].sum().reset_index()
+    dynamic['prod_id'] = prodid
+    dynamic['demand'] = np.exp(pred).max()
+    dynamic['threshold'] = 1.8648
+
+    dynamic['price'] = 'zero'
+    for i in (dynamic.index):
+      wt_act = dynamic.wt_act.iloc[i]
+      dd = dynamic.demand.iloc[i]
+      if wt_act == 0.2 or wt_act == 0.3:
+        dynamic['price'].iloc[i] = 'No Change'
+        continue
+      if dd>1.864:
+        dynamic['price'].iloc[i] = 'Decrease' 
+      else:
+        dynamic['price'].iloc[i] = 'Increase' 
+
+    dynamic.index+=1
+    st.write(dynamic)
 
 
 
